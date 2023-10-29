@@ -45,7 +45,7 @@ public class ProductTestData {
         return ProductTestData.builder();
     }
 
-    public Product toProduct() {
+    public Product buildProduct() {
         return new Product(uuid, name, description, price, created);
     }
 
@@ -63,7 +63,7 @@ public class ProductTestData {
     }
 
     public static Product getDefault() {
-        return ProductTestData.builder().build().toProduct();
+        return ProductTestData.builder().build().buildProduct();
     }
 
     public static ProductDto getDefaultDto() {
