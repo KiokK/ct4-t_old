@@ -83,8 +83,7 @@ class InMemoryProductRepositoryTest {
             Product expected = ProductTestData.defaultBuilder()
                     .withName(NEW_NAME)
                     .withPrice(NEW_PRICE)
-                    .build()
-                    .toProduct();
+                    .build().buildProduct();
 
             //when
             Product actual = productRepository.save(expected);
@@ -100,8 +99,7 @@ class InMemoryProductRepositoryTest {
             final UUID EXPECTED_UUID = NO_EXCISTS_UUID;
             Product expected = ProductTestData.defaultBuilder()
                     .withUuid(EXPECTED_UUID)
-                    .build()
-                    .toProduct();
+                    .build().buildProduct();
 
             //when
             Product actual = productRepository.save(expected);
