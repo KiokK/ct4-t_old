@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import ru.clevertec.product.data.InfoProductDto;
 import ru.clevertec.product.data.ProductDto;
 import ru.clevertec.product.entity.Product;
+import ru.clevertec.product.exception.ValidationException;
 import ru.clevertec.product.mapper.ProductMapper;
 import ru.clevertec.product.util.ProductTestData;
 
@@ -37,12 +38,9 @@ class ProductMapperImplTest {
 
 
         @Test
-        void toProductShouldThrowNullPointerException() {
-            //given
-            ProductDto testProductDto = null;
-
-            //when//then
-            assertThrows(NullPointerException.class, () -> mapper.toProduct(testProductDto));
+        void toProductShouldThrowValidationException() {
+            assertThrows(ValidationException.class,
+                    () -> mapper.toProduct(null));
         }
 
     }
@@ -65,12 +63,9 @@ class ProductMapperImplTest {
         }
 
         @Test
-        void toInfoProductDtoShouldThrowNullPointerException() {
-            //given
-            Product testProduct = null;
-
-            //when//then
-            assertThrows(NullPointerException.class, () -> mapper.toInfoProductDto(testProduct));
+        void toInfoProductDtoShouldThrowValidationException() {
+            assertThrows(ValidationException.class,
+                    () -> mapper.toInfoProductDto(null));
         }
 
     }

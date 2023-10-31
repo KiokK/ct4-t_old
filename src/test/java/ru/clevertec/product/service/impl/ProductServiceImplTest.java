@@ -9,12 +9,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.clevertec.product.data.InfoProductDto;
 import ru.clevertec.product.data.ProductDto;
 import ru.clevertec.product.entity.Product;
 import ru.clevertec.product.exception.ProductNotFoundException;
+import ru.clevertec.product.exception.ValidationException;
 import ru.clevertec.product.mapper.ProductMapper;
 import ru.clevertec.product.repository.ProductRepository;
 import ru.clevertec.product.util.ProductTestData;
@@ -27,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static ru.clevertec.product.util.consts.TestsConstants.DEFAULT_UUID;
@@ -65,12 +66,10 @@ class ProductServiceImplTest {
             Product testProduct = ProductTestData.getDefault();
 
             //when
-            Mockito.doReturn(Optional.of(testProduct))
-                    .when(productRepository)
-                    .findById(TEST_UUID);
-            Mockito.doReturn(expected)
-                    .when(mapper)
-                    .toInfoProductDto(testProduct);
+            doReturn(Optional.of(testProduct))
+                    .when(productRepository).findById(TEST_UUID);
+            doReturn(expected)
+                    .when(mapper).toInfoProductDto(testProduct);
             InfoProductDto actual = productService.get(TEST_UUID);
 
             //then
@@ -92,23 +91,13 @@ class ProductServiceImplTest {
             final int expected = 1;
 
             //when
-            Mockito.doReturn(ProductTestData.getInitInMemoryProductsList())
-                    .when(productRepository)
-                    .findAll();
+            doReturn(ProductTestData.getInitInMemoryProductsList())
+                    .when(productRepository).findAll();
             final int actual = productService.getAll().size();
 
             //then
             assertThat(actual)
                     .isEqualTo(expected);
-        }
-
-        @Test
-        void getAllVerify() {
-            //when
-            productService.getAll();
-
-            //then
-            verify(productRepository).findAll();
         }
 
     }
@@ -117,10 +106,10 @@ class ProductServiceImplTest {
     class Create {
 
         @Test
-        void createShouldThrowsNullPointerException() {
+        void createShouldThrowsValidationException() {
             assertAll(
                     () ->
-                            assertThrows(NullPointerException.class, () -> productService.create(null)),
+                            assertThrows(ValidationException.class, () -> productService.create(null)),
                     () ->
                             verify(productRepository, times(0)).save(any())
             );
@@ -137,12 +126,10 @@ class ProductServiceImplTest {
             expectedRepositoryProduct.setUuid(expected);
 
             //when
-            Mockito.doReturn(expectedMapperProduct)
-                    .when(mapper)
-                    .toProduct(testDto);
-            Mockito.doReturn(expectedRepositoryProduct)
-                    .when(productRepository)
-                    .save(testProduct);
+            doReturn(expectedMapperProduct)
+                    .when(mapper).toProduct(testDto);
+            doReturn(expectedRepositoryProduct)
+                    .when(productRepository).save(testProduct);
             UUID actual = productService.create(testDto);
 
             //then
@@ -175,22 +162,17 @@ class ProductServiceImplTest {
             testProduct.setUuid(NEW_UUID);
 
             //when
-            Mockito.doReturn(Optional.of(expected))
-                    .when(productRepository)
-                    .findById(NEW_UUID);
-            Mockito.doReturn(expected)
-                    .when(mapper)
-                    .merge(testProduct, testDtoProduct);
-            Mockito.doReturn(expected)
-                    .when(productRepository)
-                    .save(testProduct);
+            doReturn(Optional.of(expected))
+                    .when(productRepository).findById(NEW_UUID);
+            doReturn(expected)
+                    .when(mapper).merge(testProduct, testDtoProduct);
+            doReturn(expected)
+                    .when(productRepository).save(testProduct);
             productService.update(NEW_UUID, testDtoProduct);
 
             //then
             assertAll(
                     () -> assertThat(testProduct).isEqualTo(expected),
-                    () -> verify(productRepository).findById(NEW_UUID),
-                    () -> verify(mapper).merge(testProduct, testDtoProduct),
                     () -> verify(productRepository).save(productCaptor.capture()),
                     () -> assertThat(productCaptor.getValue()).isEqualTo(testProduct)
             );

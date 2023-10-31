@@ -22,8 +22,8 @@ import static ru.clevertec.product.util.consts.TestsConstants.NEW_DESCRIPTION;
 import static ru.clevertec.product.util.consts.TestsConstants.NEW_NAME;
 import static ru.clevertec.product.util.consts.TestsConstants.NEW_PRICE;
 
-@Builder(setterPrefix = "with")
 @Data
+@Builder(setterPrefix = "with")
 public class ProductTestData {
 
     @Builder.Default

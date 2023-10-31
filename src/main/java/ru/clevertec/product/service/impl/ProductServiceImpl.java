@@ -5,13 +5,13 @@ import ru.clevertec.product.data.InfoProductDto;
 import ru.clevertec.product.data.ProductDto;
 import ru.clevertec.product.entity.Product;
 import ru.clevertec.product.exception.ProductNotFoundException;
+import ru.clevertec.product.exception.ValidationException;
 import ru.clevertec.product.mapper.ProductMapper;
 import ru.clevertec.product.repository.ProductRepository;
 import ru.clevertec.product.service.ProductService;
+import ru.clevertec.product.validator.ProductValidator;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -22,8 +22,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public InfoProductDto get(UUID uuid) {
-        return mapper.toInfoProductDto(productRepository.findById(uuid)
-                .orElseThrow(() -> new ProductNotFoundException(uuid)));
+        return productRepository.findById(uuid)
+                .map(mapper::toInfoProductDto)
+                .orElseThrow(() -> new ProductNotFoundException(uuid));
     }
 
 
@@ -37,16 +38,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public UUID create(ProductDto productDto) {
-        Objects.requireNonNull(productDto);
+        if (productDto == null)
+            throw new ValidationException(ProductDto.class);
         Product newProduct = mapper.toProduct(productDto);
+        ProductValidator.isProductValid(newProduct);
         return productRepository.save(newProduct).getUuid();
     }
 
     @Override
     public void update(UUID uuid, ProductDto productDto) {
         productRepository.findById(uuid)
-                .map(find -> mapper.merge(find, productDto))
-                .flatMap(product -> Optional.ofNullable(productRepository.save(product)))
+                .map(curentProduct -> mapper.merge(curentProduct, productDto))
+                .filter(ProductValidator::isProductValid)
+                .map(productRepository::save)
                 .orElseThrow(() -> new ProductNotFoundException(uuid));
     }
 

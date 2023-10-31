@@ -78,7 +78,7 @@ class InMemoryProductRepositoryTest {
     class Save {
 
         @Test
-        void saveShouldSaveUpdatedDefaultProduct() {
+        void saveShouldUpdateProduct() {
             //given
             Product expected = ProductTestData.defaultBuilder()
                     .withName(NEW_NAME)
@@ -138,16 +138,10 @@ class InMemoryProductRepositoryTest {
     @Nested
     class Delete {
 
-        @BeforeEach
-        void setUp() {
-            productRepository = new InMemoryProductRepository();
-        }
-
         @Test
         void deleteShouldMakeAmountLess() {
             //given
-            Product savedProduct = productRepository.save(ProductTestData.getDefault());
-            final UUID TEST_UUID = savedProduct.getUuid();
+            final UUID TEST_UUID = DEFAULT_UUID;
             int expected = productRepository.findAll().size() - 1;
 
             //when
