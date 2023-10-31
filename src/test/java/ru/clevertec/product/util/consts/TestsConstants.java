@@ -9,7 +9,7 @@ public class TestsConstants {
 
     public static final UUID DEFAULT_UUID = UUID.fromString("346d425a-51ea-402d-a465-f2ce9decf3c8");
     public static final String DEFAULT_NAME =  "Apple";
-    public static final String DEFAULT_DESCRIPTION =  "Prince, From Asia!";
+    public static final String DEFAULT_DESCRIPTION =  "Prince From Asia";
     public static final BigDecimal DEFAULT_PRICE = BigDecimal.valueOf(0.55);
     public static final LocalDateTime DEFAULT_CREATED = LocalDateTime.of(2023, Month.OCTOBER, 26, 3,33,23);
 

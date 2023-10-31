@@ -9,6 +9,7 @@ import ru.clevertec.product.exception.ValidationException;
 import ru.clevertec.product.mapper.ProductMapper;
 import ru.clevertec.product.repository.ProductRepository;
 import ru.clevertec.product.service.ProductService;
+import ru.clevertec.product.validator.ProductValidator;
 
 import java.util.List;
 import java.util.UUID;
@@ -40,6 +41,7 @@ public class ProductServiceImpl implements ProductService {
         if (productDto == null)
             throw new ValidationException(ProductDto.class);
         Product newProduct = mapper.toProduct(productDto);
+        ProductValidator.isProductValid(newProduct);
         return productRepository.save(newProduct).getUuid();
     }
 
@@ -47,6 +49,7 @@ public class ProductServiceImpl implements ProductService {
     public void update(UUID uuid, ProductDto productDto) {
         productRepository.findById(uuid)
                 .map(curentProduct -> mapper.merge(curentProduct, productDto))
+                .filter(ProductValidator::isProductValid)
                 .map(productRepository::save)
                 .orElseThrow(() -> new ProductNotFoundException(uuid));
     }
